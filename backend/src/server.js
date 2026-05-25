@@ -10,7 +10,7 @@ const server = http.createServer(app);
 
 const io = new SocketServer(server, {
   cors: {
-    origin: env.clientUrl,
+    origin: env.nodeEnv === "production" ? true : env.clientUrl,
     methods: ["GET", "POST"]
   }
 });

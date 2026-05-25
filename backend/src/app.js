@@ -42,7 +42,7 @@ const upload = multer({
 
 app.use(
   cors({
-    origin: env.clientUrl,
+    origin: env.nodeEnv === "production" ? true : env.clientUrl,
     credentials: true
   })
 );

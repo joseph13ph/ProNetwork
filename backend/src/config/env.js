@@ -15,6 +15,8 @@ export const env = {
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
   clientUrl: process.env.CLIENT_URL || "http://localhost:5174",
   csrfEnabled: process.env.ENABLE_CSRF === "true",
+  dbDialect: process.env.DB_DIALECT || "mysql",
+  dbStorage: process.env.DB_STORAGE || "",
   dbHost: process.env.DB_HOST || "localhost",
   dbPort: Number(process.env.DB_PORT || 3306),
   dbUser: process.env.DB_USER || "root",
