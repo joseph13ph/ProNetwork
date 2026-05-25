@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Accent Colors (updated by JS) */
+  --color-primary: #8b5cf6;
+  --color-secondary: #ec4899;
+  --bg-accent-1: rgba(139, 92, 246, 0.12);
+  --bg-accent-2: rgba(236, 72, 153, 0.12);
+  --bg-accent-3: rgba(59, 130, 246, 0.08);
+  
+  /* Light Theme Variables */
+  --bg-main: #f8fafc;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-sidebar: #ffffff;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-light: #e2e8f0;
+  
+  --color-danger: #f4212e;
+  --color-success: #10b981;
+  --app-font-family: "Inter", sans-serif;
+  --surface-radius: 16px;
+  --surface-border-width: 1px;
+}
+
+:root[data-theme="dark"] {
+  /* Dark Theme Variables */
+  --bg-main: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-sidebar: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-light: #334155;
+}
+
+html {
+  font-size: clamp(16px, 0.28vw + 15px, 18px);
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  font-family: var(--app-font-family);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  background-image: 
+    radial-gradient(circle at 10% 10%, var(--bg-accent-1), transparent 30%),
+    radial-gradient(circle at 90% 20%, var(--bg-accent-2), transparent 24%),
+    radial-gradient(circle at 50% 95%, var(--bg-accent-3), transparent 26%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color: var(--text-main);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: var(--surface-border-width) solid var(--border-light);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+}
+
+.sidebar-panel {
+  background: var(--bg-sidebar);
+  border: var(--surface-border-width) solid var(--border-light);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.08);
+}
+
+.btn-primary {
+  @apply rounded-xl2 px-5 py-3 text-base font-medium text-white transition-all duration-300;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(139, 92, 246, 0.4);
+}
+
+.btn-secondary {
+  @apply rounded-xl2 px-5 py-3 text-base font-medium transition-all duration-300 border;
+  background: transparent;
+  border-color: var(--border-light);
+  color: var(--text-main);
+}
+
+.btn-secondary:hover {
+  background: var(--border-light);
+}
+
+.input {
+  @apply w-full rounded-xl2 border px-4 py-3 text-base outline-none transition-colors duration-300;
+  background-color: transparent;
+  border-color: var(--border-light);
+  color: var(--text-main);
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.2);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+select.input {
+  background-color: var(--bg-card);
+  color: var(--text-main);
+}
+
+select.input option {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+:root[data-theme="dark"] select.input option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+/* Increase stacking context to reduce overlap with browser hints */
+.input {
+  position: relative;
+  z-index: 1;
+}
+
+/* Improve contrast for muted text */
+.text-mediumGray { color: var(--text-muted); }
+
+/* Theme accents as CSS variables */
+.accent { color: var(--color-primary); }
+.accent-bg { background: linear-gradient(135deg, var(--color-primary), var(--color-secondary)); }
+
+.hero-panel {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 80%, #000 20%), color-mix(in srgb, var(--color-secondary) 82%, #fff 18%));
+}
+
+.theme-preview-ring {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.28), 0 18px 30px rgba(15, 23, 42, 0.12);
+}
+
+.surface-strong {
+  border: 1px solid var(--border-light);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.10);
+}
+
+/* Navbar glass */
+.glass-navbar {
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+/* Bubbles container sits behind content */
+.bubble-layer { z-index: -10; }
+
+/* Toast style overrides */
+.rounded-xl2 { border-radius: var(--surface-radius); }
+
