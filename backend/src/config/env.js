@@ -14,6 +14,7 @@ export const env = {
   jwtSecret: process.env.JWT_SECRET || "change_this_secret",
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1d",
   clientUrl: process.env.CLIENT_URL || "http://localhost:5174",
+  csrfEnabled: process.env.ENABLE_CSRF === "true",
   dbHost: process.env.DB_HOST || "localhost",
   dbPort: Number(process.env.DB_PORT || 3306),
   dbUser: process.env.DB_USER || "root",

@@ -19,6 +19,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadDir = path.resolve(__dirname, "..", "..", "uploads");
 const legacyUploadDir = path.resolve(__dirname, "..", "..", "backend", "uploads");
+const frontendDistDir = path.resolve(__dirname, "..", "..", "frontend", "dist");
+const frontendIndexFile = path.join(frontendDistDir, "index.html");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -70,7 +72,7 @@ app.use("/uploads", express.static(uploadDir));
 app.use("/uploads", express.static(legacyUploadDir));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, limit: 300 }));
 
-if (env.nodeEnv === "production") {
+if (env.csrfEnabled) {
   app.use(csrf({ cookie: true }));
 }
 
@@ -87,6 +89,19 @@ app.post("/api/upload", upload.single("file"), (req, res) => {
 });
 
 app.use("/api", routes);
+
+if (fs.existsSync(frontendIndexFile)) {
+  app.use(express.static(frontendDistDir));
+
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+      return next();
+    }
+
+    return res.sendFile(frontendIndexFile);
+  });
+}
+
 app.use(notFound);
 app.use(errorHandler);
 
