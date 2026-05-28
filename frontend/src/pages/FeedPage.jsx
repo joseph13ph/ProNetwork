@@ -12,7 +12,7 @@ const FeedPage = () => {
   const [content, setContent] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
-  const assetBaseUrl = useMemo(() => (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api$/, ""), []);
+  const assetBaseUrl = useMemo(() => (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api$/, ""), []);
 
   const fetchFeed = async () => {
     try {
@@ -56,7 +56,7 @@ const FeedPage = () => {
 
   const handlePublish = async () => {
     if (!content.trim() && !imageFile) {
-      addToast("Debes escribir algo o adjuntar una imagen", "error");
+      addToast("El contenido no puede estar vacío", "error");
       return;
     }
 
@@ -116,9 +116,14 @@ const FeedPage = () => {
             <textarea
               className="input min-h-28 resize-none border-transparent bg-white/50 text-base shadow-sm dark:bg-slate-950/20"
               placeholder="Comparte un logro, una vacante o una idea que pueda inspirar a otros..."
+              maxLength={500}
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
+
+            <p className="mt-2 text-right text-xs text-mediumGray">
+              {content.length}/500 caracteres
+            </p>
 
             {imagePreview ? (
               <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200/70 dark:border-slate-700">

@@ -20,7 +20,7 @@ const AppLayout = () => {
       <div className="mx-auto mt-3 grid max-w-6xl gap-4 md:grid-cols-[220px_1fr]">
         <aside className="sidebar-panel rounded-xl2 p-4 shadow-soft">
           <div className="mb-8">
-            <h1 className="text-2xl font-bold accent">ProConnect</h1>
+            <h1 className="text-2xl font-bold accent">ProNetwork</h1>
             <p className="text-xs text-mediumGray">Red profesional</p>
           </div>
           <nav className="space-y-2">

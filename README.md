@@ -1,6 +1,6 @@
-# ProConnect
+# ProNetwork
 
-ProConnect es una red social profesional moderna inspirada en LinkedIn para networking, empleos, publicaciones, conexiones y mensajeria.
+ProNetwork es una red social profesional moderna inspirada en LinkedIn para networking, empleos, publicaciones, conexiones y mensajeria.
 
 ## Estructura
 

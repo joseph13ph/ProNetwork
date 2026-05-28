@@ -1,4 +1,4 @@
-const apiBaseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api\/?$/, "");
+const apiBaseUrl = (import.meta.env.VITE_API_URL || "http://localhost:5001/api").replace(/\/api\/?$/, "");
 
 export const resolveAssetUrl = (value) => {
   if (!value) return "";

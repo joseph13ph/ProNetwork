@@ -63,7 +63,15 @@ export const registerUser = async (payload) => {
 };
 
 export const loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ where: { email: email.trim().toLowerCase() } });
+  const normalizedEmail = email.trim().toLowerCase();
+
+  if (!isRealisticEmail(normalizedEmail)) {
+    const error = new Error("Correo no válido. Usa el formato: usuario@dominio.com");
+    error.status = 400;
+    throw error;
+  }
+
+  const user = await User.findOne({ where: { email: normalizedEmail } });
   if (!user) {
     const error = new Error("Credenciales invalidas");
     error.status = 401;

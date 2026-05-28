@@ -8,7 +8,7 @@ const LandingPage = () => {
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}>
           <span className="rounded-full bg-lightPurple px-3 py-1 text-xs font-medium text-darkGray">Networking profesional de nueva generacion</span>
           <h1 className="mt-4 text-4xl font-bold leading-tight md:text-5xl">
-            Conecta talento, empleo y oportunidades en <span className="text-primary">ProConnect</span>
+            Conecta talento, empleo y oportunidades en <span className="text-primary">ProNetwork</span>
           </h1>
           <p className="mt-4 max-w-2xl text-base text-mediumGray">
             Plataforma inspirada en LinkedIn para publicaciones, conexiones, mensajeria en tiempo real y empleos con enfoque profesional.

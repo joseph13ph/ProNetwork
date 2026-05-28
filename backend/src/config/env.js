@@ -22,4 +22,6 @@ export const env = {
   dbUser: process.env.DB_USER || "root",
   dbPassword: process.env.DB_PASSWORD || "",
   dbName: process.env.DB_NAME || "proconnect_db"
+  ,
+  trustProxy: process.env.TRUST_PROXY === "true"
 };

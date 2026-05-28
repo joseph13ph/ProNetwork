@@ -61,7 +61,7 @@ const Navbar = () => {
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-white/10 bg-white/25 px-4 backdrop-blur-md shadow-sm">
       <div className="flex items-center gap-3">
         <div className="rounded-full bg-gradient-to-br from-purple-600 to-pink-500 p-2 text-white font-bold">PC</div>
-        <h1 className="text-lg font-semibold">ProConnect</h1>
+        <h1 className="text-lg font-semibold">ProNetwork</h1>
       </div>
 
       <nav className="relative flex items-center gap-3">

@@ -25,7 +25,7 @@ const StartupAnimation = ({ show }) => {
               PC
             </motion.div>
             <div className="text-center">
-              <p className="text-sm uppercase tracking-[0.3em] text-white/60">ProConnect</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-white/60">ProNetwork</p>
               <h1 className="mt-2 text-3xl font-bold text-white">Conectando profesionales</h1>
             </div>
           </motion.div>

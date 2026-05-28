@@ -15,6 +15,11 @@ import { sanitizeBody } from "./middlewares/sanitizeMiddleware.js";
 
 const app = express();
 
+// Trust proxy when running behind a reverse proxy (localtunnel, render, etc.)
+if (env.trustProxy) {
+  app.set("trust proxy", 1);
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadDir = path.resolve(__dirname, "..", "..", "uploads");

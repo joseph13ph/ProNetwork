@@ -11,7 +11,8 @@ const server = http.createServer(app);
 const io = new SocketServer(server, {
   cors: {
     origin: env.nodeEnv === "production" ? true : env.clientUrl,
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
+    credentials: true
   }
 });
 

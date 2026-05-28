@@ -60,7 +60,7 @@ const RegisterPage = () => {
     <div className="flex min-h-screen items-center justify-center px-4 py-8 md:px-6">
       <form autoComplete="on" onSubmit={handleSubmit} className="glass w-full max-w-2xl rounded-2xl p-6 shadow-soft md:p-8">
         <h1 className="text-3xl font-bold md:text-4xl">Crear cuenta</h1>
-        <p className="mt-2 text-base text-mediumGray">Unete a ProConnect</p>
+        <p className="mt-2 text-base text-mediumGray">Unete a ProNetwork</p>
 
         <div className="mt-7 grid gap-4 md:grid-cols-2">
           <input name="given-name" autoComplete="given-name" className="input" placeholder="Nombre" value={form.nombre} onChange={(e) => updateField("nombre", e.target.value)} />
