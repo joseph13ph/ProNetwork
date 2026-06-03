@@ -89,3 +89,51 @@ npm run dev
 ## Usuarios demo
 
 Ver `docs/usuarios-iniciales.md`.
+
+## Mensaje sobre localhost
+
+Si ves una URL como `http://localhost:5173` (frontend) o `http://localhost:5001` (backend), es normal.
+
+- `localhost` significa "este mismo computador".
+- Solo funciona en tu maquina mientras el proyecto este ejecutandose.
+- Para compartir con otras personas, usa GitHub (codigo) o GitHub Pages (sitio publicado).
+
+## Guia rapida: descargar y ejecutar en localhost
+
+1. Clona el repositorio:
+```bash
+git clone https://github.com/joseph13ph/ProNetwork.git
+cd ProNetwork
+```
+
+2. Instala dependencias de todo el proyecto:
+```bash
+npm install
+```
+
+3. Configura variables de entorno:
+- Copia `backend/.env.example` a `backend/.env`.
+- Copia `frontend/.env.example` a `frontend/.env`.
+
+4. Configura tu base de datos MySQL en `backend/.env`:
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=tu_password_mysql
+DB_NAME=proconnect_db
+```
+
+5. Crea tablas y datos iniciales:
+```bash
+npm run seed --workspace backend
+```
+
+6. Levanta backend y frontend juntos:
+```bash
+npm run dev
+```
+
+7. Abre la aplicacion en tu navegador:
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:5001/api`
