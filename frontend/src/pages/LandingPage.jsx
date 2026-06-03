@@ -16,6 +16,14 @@ const LandingPage = () => {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/register" className="btn-primary">Crear cuenta</Link>
             <Link to="/login" className="rounded-xl2 border border-slate-300 px-4 py-2 text-sm font-medium">Iniciar sesion</Link>
+            <a
+              href="https://github.com/joseph13ph/ProNetwork"
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl2 border border-primary px-4 py-2 text-sm font-medium text-primary"
+            >
+              Ver repositorio en GitHub
+            </a>
           </div>
         </motion.div>
       </div>
