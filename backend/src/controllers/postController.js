@@ -1,4 +1,4 @@
-import { Post, Comment, User, Profile, Like, Notification } from "../models/index.js";
+import { Post, Comment, User, Profile, Like, Notification, SavedPost } from "../models/index.js";
 import { getIo } from "../utils/socketServer.js";
 import { getUserId } from "../utils/auth.js";
 
@@ -23,12 +23,15 @@ export const getFeed = async (req, res) => {
       order: [["createdAt", "DESC"]]
     });
 
-    // Map likes count and whether current user liked each post
+    const savedPosts = await SavedPost.findAll({ where: { userId: currentUserId } });
+    const savedPostIds = new Set(savedPosts.map((item) => Number(item.postId)));
+
+    // Map likes count and whether current user liked or saved each post
     const mapped = posts.map((p) => {
       const likesCount = p.Likes ? p.Likes.length : 0;
-      const likedByUser = !!(p.Likes && p.Likes.some((l) => l.userId === currentUserId));
+      const likedByUser = !!(p.Likes && p.Likes.some((l) => Number(l.userId) === Number(currentUserId)));
       const plain = p.toJSON();
-      return { ...plain, likesCount, likedByUser };
+      return { ...plain, likesCount, likedByUser, savedByUser: savedPostIds.has(Number(p.id)) };
     });
 
     res.json(mapped);

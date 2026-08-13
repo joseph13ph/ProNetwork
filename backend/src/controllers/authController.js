@@ -1,7 +1,7 @@
 import { registerUser, loginUser } from "../services/authService.js";
 import { User } from "../models/index.js";
 import { getUserId } from "../utils/auth.js";
-import { isStrongPassword } from "../utils/password.js";
+import { hashPassword, isStrongPassword } from "../utils/password.js";
 import {
   consumePasswordResetToken,
   createPasswordResetRequest,
@@ -24,7 +24,8 @@ export const register = async (req, res, next) => {
         rol: user.rol,
         ubicacion: user.ubicacion,
         foto_perfil: user.foto_perfil,
-        telefono: user.telefono
+        telefono: user.telefono,
+        es_premium: user.es_premium
       }
     });
   } catch (error) {
@@ -45,7 +46,8 @@ export const login = async (req, res, next) => {
         rol: user.rol,
         ubicacion: user.ubicacion,
         foto_perfil: user.foto_perfil,
-        telefono: user.telefono
+        telefono: user.telefono,
+        es_premium: user.es_premium
       }
     });
   } catch (error) {
@@ -57,7 +59,7 @@ export const me = async (req, res, next) => {
   try {
     const userId = getUserId(req.user);
     const user = await User.findByPk(userId, {
-      attributes: ["id_usuario", "nombre", "apellido", "email", "rol", "ubicacion", "foto_perfil", "telefono"]
+      attributes: ["id_usuario", "nombre", "apellido", "email", "rol", "ubicacion", "foto_perfil", "telefono", "es_premium"]
     });
 
     if (!user) {
@@ -85,7 +87,7 @@ export const updateMe = async (req, res, next) => {
     await User.update(payload, { where: { id_usuario: userId } });
 
     const user = await User.findByPk(userId, {
-      attributes: ["id_usuario", "nombre", "apellido", "email", "rol", "ubicacion", "foto_perfil", "telefono"]
+      attributes: ["id_usuario", "nombre", "apellido", "email", "rol", "ubicacion", "foto_perfil", "telefono", "es_premium"]
     });
 
     return res.status(200).json({ user });
@@ -155,7 +157,8 @@ export const resetPassword = async (req, res, next) => {
       return res.status(200).json({ message: "Contraseña actualizada" });
     }
 
-    await User.update({ password: newPassword }, { where: { id_usuario: result.userId } });
+    const password_hash = await hashPassword(newPassword);
+    await User.update({ password_hash }, { where: { id_usuario: result.userId } });
     return res.status(200).json({ message: "Contraseña actualizada" });
   } catch (error) {
     return next(error);
@@ -206,7 +209,7 @@ export const premiumStatus = async (req, res, next) => {
         status: payment.status,
         transactionId: payment.transactionId,
         processedAt: payment.processedAt,
-        isPremium: isPremiumUser(userId)
+        isPremium: await isPremiumUser(userId)
       }
     });
   } catch (error) {

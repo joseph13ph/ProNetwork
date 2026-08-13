@@ -1,20 +1,12 @@
 import crypto from "crypto";
+import { User } from "../models/index.js";
 
 const passwordResetRequests = new Map();
 const passwordResetTokens = new Map();
 
 const premiumPayments = new Map();
-const premiumUsers = new Set();
-
-const connectionRequests = new Map();
-let connectionRequestSeq = 1;
 
 const randomDelay = (minMs, maxMs) => Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
-const pairKey = (a, b) => {
-  const first = Number(a);
-  const second = Number(b);
-  return first < second ? `${first}:${second}` : `${second}:${first}`;
-};
 
 export const createPasswordResetRequest = ({ email, userId }) => {
   const requestId = crypto.randomUUID();
@@ -122,14 +114,20 @@ export const createPremiumPayment = ({ userId, plan = "premium_monthly" }) => {
 
   premiumPayments.set(paymentId, payment);
 
-  setTimeout(() => {
+  setTimeout(async () => {
     const current = premiumPayments.get(paymentId);
     if (!current || current.status !== "processing") return;
     current.status = "succeeded";
     current.transactionId = `txn_${crypto.randomBytes(8).toString("hex")}`;
     current.processedAt = new Date();
     premiumPayments.set(paymentId, current);
-    premiumUsers.add(String(userId));
+
+    try {
+      await User.update({ es_premium: true }, { where: { id_usuario: userId } });
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.error("Error al activar premium", error);
+    }
   }, randomDelay(1400, 4200));
 
   return payment;
@@ -142,63 +140,7 @@ export const getPremiumPaymentStatus = ({ paymentId, userId }) => {
   return payment;
 };
 
-export const isPremiumUser = (userId) => premiumUsers.has(String(userId));
-
-export const createConnectionRequest = ({ fromUserId, toUserId }) => {
-  if (Number(fromUserId) === Number(toUserId)) {
-    return { ok: false, reason: "SELF_REQUEST" };
-  }
-
-  for (const item of connectionRequests.values()) {
-    const sameDirection = Number(item.fromUserId) === Number(fromUserId) && Number(item.toUserId) === Number(toUserId);
-    const oppositeDirection = Number(item.fromUserId) === Number(toUserId) && Number(item.toUserId) === Number(fromUserId);
-
-    if ((sameDirection || oppositeDirection) && item.status === "pending") {
-      return { ok: false, reason: "ALREADY_PENDING", request: item };
-    }
-
-    if ((sameDirection || oppositeDirection) && item.status === "accepted") {
-      return { ok: false, reason: "ALREADY_CONNECTED", request: item };
-    }
-  }
-
-  const request = {
-    id: connectionRequestSeq++,
-    fromUserId: Number(fromUserId),
-    toUserId: Number(toUserId),
-    pairKey: pairKey(fromUserId, toUserId),
-    status: "pending",
-    createdAt: new Date(),
-    updatedAt: new Date()
-  };
-
-  connectionRequests.set(request.id, request);
-  return { ok: true, request };
-};
-
-export const respondConnectionRequest = ({ requestId, userId, action }) => {
-  const request = connectionRequests.get(Number(requestId));
-  if (!request) return { ok: false, reason: "NOT_FOUND" };
-  if (Number(request.toUserId) !== Number(userId)) return { ok: false, reason: "FORBIDDEN" };
-  if (request.status !== "pending") return { ok: false, reason: "ALREADY_RESOLVED", request };
-
-  request.status = action === "accept" ? "accepted" : "rejected";
-  request.updatedAt = new Date();
-  connectionRequests.set(request.id, request);
-  return { ok: true, request };
-};
-
-export const listConnectionsForUser = (userId) => {
-  const id = Number(userId);
-  const sent = [];
-  const received = [];
-  const accepted = [];
-
-  for (const request of connectionRequests.values()) {
-    if (request.status === "pending" && request.fromUserId === id) sent.push(request);
-    if (request.status === "pending" && request.toUserId === id) received.push(request);
-    if (request.status === "accepted" && (request.fromUserId === id || request.toUserId === id)) accepted.push(request);
-  }
-
-  return { sent, received, accepted };
+export const isPremiumUser = async (userId) => {
+  const user = await User.findByPk(userId, { attributes: ["es_premium"] });
+  return Boolean(user?.es_premium);
 };

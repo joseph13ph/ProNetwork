@@ -7,15 +7,14 @@ import { useToast } from "../context/ToastContext";
 import { resolveAssetUrl } from "../utils/assets";
 import { useAuth } from "../context/AuthContext";
 
-const PostCard = ({ post, onLike, onComment, onDelete }) => {
+const PostCard = ({ post, onLike, onComment, onDelete, onSaveChange }) => {
   const { user } = useAuth();
   const { addToast } = useToast();
   const [likesCount, setLikesCount] = useState(post.likesCount || 0);
   const [liked, setLiked] = useState(!!post.likedByUser);
   const [authorImageError, setAuthorImageError] = useState(false);
   const [postImageError, setPostImageError] = useState(false);
-  const savedIds = JSON.parse(localStorage.getItem("proconnect_saved_posts") || "[]");
-  const [saved, setSaved] = useState(savedIds.includes(post.id));
+  const [saved, setSaved] = useState(!!post.savedByUser);
   const isOwner = Number(post.userId) === Number(user?.id_usuario);
 
   const handleToggleLike = async () => {
@@ -31,12 +30,16 @@ const PostCard = ({ post, onLike, onComment, onDelete }) => {
     }
   };
 
-  const handleToggleSave = () => {
-    const current = JSON.parse(localStorage.getItem("proconnect_saved_posts") || "[]");
-    const nextSaved = current.includes(post.id) ? current.filter((item) => item !== post.id) : [...current, post.id];
-    localStorage.setItem("proconnect_saved_posts", JSON.stringify(nextSaved));
-    setSaved(!saved);
-    addToast(saved ? "Publicación quitada de guardados" : "Publicación guardada", "info");
+  const handleToggleSave = async () => {
+    try {
+      const res = await api.post(`/posts/${post.id}/save`);
+      const nextSaved = res.data.action === "saved";
+      setSaved(nextSaved);
+      addToast(nextSaved ? "Publicación guardada" : "Publicación quitada de guardados", "info");
+      if (onSaveChange) onSaveChange(post.id, nextSaved);
+    } catch (error) {
+      addToast(error.response?.data?.message || "No se pudo guardar la publicación", "error");
+    }
   };
 
   const handleDelete = async () => {

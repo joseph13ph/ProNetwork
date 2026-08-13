@@ -8,6 +8,8 @@ import { Notification } from "./Notification.js";
 import { Job } from "./Job.js";
 import { Application } from "./Application.js";
 import { Message } from "./Message.js";
+import { Connection } from "./Connection.js";
+import { SavedPost } from "./SavedPost.js";
 
 // Perfil (definido en Profile.js con id_usuario)
 // Relaciones de Feed y Comentarios
@@ -34,4 +36,23 @@ Job.hasMany(Application, { foreignKey: "jobId" });
 Application.belongsTo(Job, { foreignKey: "jobId" });
 Application.belongsTo(User, { foreignKey: "userId", targetKey: "id_usuario" });
 
-export { sequelize, User, Profile, Post, Comment, Like, Notification, Job, Application, Message };
+User.hasMany(SavedPost, { foreignKey: "userId", sourceKey: "id_usuario", constraints: false });
+SavedPost.belongsTo(User, { foreignKey: "userId", targetKey: "id_usuario", constraints: false });
+
+Post.hasMany(SavedPost, { foreignKey: "postId", onDelete: "CASCADE", constraints: false });
+SavedPost.belongsTo(Post, { foreignKey: "postId", constraints: false });
+
+export {
+  sequelize,
+  User,
+  Profile,
+  Post,
+  Comment,
+  Like,
+  Notification,
+  Job,
+  Application,
+  Message,
+  Connection,
+  SavedPost
+};

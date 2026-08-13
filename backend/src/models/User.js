@@ -50,6 +50,11 @@ export const User = sequelize.define(
     estado: {
       type: DataTypes.ENUM("activo", "inactivo", "bloqueado"),
       defaultValue: "activo"
+    },
+    es_premium: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
     }
   },
   {

@@ -4,6 +4,7 @@ import app from "./app.js";
 import { env } from "./config/env.js";
 import { sequelize } from "./models/index.js";
 import { initDatabase } from "./config/initDatabase.js";
+import { syncDatabase } from "./config/syncDatabase.js";
 import { setIo } from "./utils/socketServer.js";
 
 const server = http.createServer(app);
@@ -22,17 +23,13 @@ io.on("connection", (socket) => {
   socket.on("join", (userId) => {
     socket.join(`user:${userId}`);
   });
-
-  socket.on("private-message", ({ toUserId, content, fromUserId }) => {
-    io.to(`user:${toUserId}`).emit("private-message", { content, fromUserId });
-  });
 });
 
 const start = async () => {
   try {
     await initDatabase();
     await sequelize.authenticate();
-    await sequelize.sync();
+    await syncDatabase();
     server.listen(env.port, () => {
       // eslint-disable-next-line no-console
       console.log(`ProConnect API ejecutandose en puerto ${env.port}`);
