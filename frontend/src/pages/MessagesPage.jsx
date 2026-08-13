@@ -42,7 +42,7 @@ const MessagesPage = () => {
 
     socket.on("private-message", (msg) => {
       if (activeUser && Number(msg.fromUserId) === Number(activeUser.id_usuario)) {
-        setMessages((m) => [...m, { ...msg, incoming: true }]);
+        setMessages((current) => appendMessage(current, { ...msg, incoming: true }));
       }
     });
 
@@ -66,6 +66,14 @@ const MessagesPage = () => {
 
   const emojiList = ["😀", "😂", "😍", "👍", "🔥", "🙏", "🎉", "💡", "🚀", "❤️"];
 
+  const appendMessage = (current, message) => {
+    if (message.id && current.some((item) => item.id === message.id)) {
+      return current;
+    }
+
+    return [...current, message];
+  };
+
   const parseMessage = (value) => {
     try {
       const parsed = JSON.parse(value);
@@ -87,9 +95,11 @@ const MessagesPage = () => {
     try {
       const res = await api.get(`/messages?with=${u.id_usuario}`);
       const history = (res.data?.data || []).map((m) => ({
+        id: m.id,
         content: m.content,
         incoming: Number(m.fromUserId) !== Number(user.id_usuario),
-        fromUserId: m.fromUserId
+        fromUserId: m.fromUserId,
+        createdAt: m.createdAt
       }));
       setMessages(history);
     } catch {
@@ -102,15 +112,20 @@ const MessagesPage = () => {
 
     const payloadContent = JSON.stringify({ text: text.trim(), imageUrl: imageUrl || "" });
     const payload = { toUserId: activeUser.id_usuario, content: payloadContent };
-    setMessages((m) => [...m, { ...payload, incoming: false, fromUserId: user.id_usuario }]);
-    socket.emit("private-message", {
-      toUserId: activeUser.id_usuario,
-      content: payloadContent,
-      fromUserId: user.id_usuario
-    });
 
     try {
-      await api.post("/messages", payload);
+      // El mensaje solo se muestra cuando el backend confirma que quedo guardado.
+      const { data } = await api.post("/messages", payload);
+      const saved = data?.data;
+      setMessages((current) =>
+        appendMessage(current, {
+          id: saved?.id,
+          content: saved?.content ?? payloadContent,
+          incoming: false,
+          fromUserId: user.id_usuario,
+          createdAt: saved?.createdAt
+        })
+      );
       setText("");
       setImageUrl("");
     } catch {
@@ -161,7 +176,7 @@ const MessagesPage = () => {
         <div ref={messagesRef} className="max-h-[60vh] space-y-3 overflow-auto">
           {messages.map((m, i) => (
             <div
-              key={i}
+              key={m.id ?? `local-${i}`}
               className={`max-w-[70%] rounded-2xl p-3 text-sm ${m.incoming ? "bg-white/80 text-black" : "ml-auto bg-primary text-white"}`}
             >
               {(() => {

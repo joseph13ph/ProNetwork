@@ -46,9 +46,10 @@ export const sendMessage = async (req, res) => {
     const io = getIo();
     if (io) {
       io.to(`user:${toUserId}`).emit("private-message", {
-        content: message.content,
-        fromUserId: userId,
         id: message.id,
+        content: message.content,
+        fromUserId: Number(userId),
+        toUserId: Number(toUserId),
         createdAt: message.createdAt
       });
     }

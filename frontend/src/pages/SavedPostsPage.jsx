@@ -1,24 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import api from "../services/api";
 import PostCard from "../components/PostCard";
 
 const SavedPostsPage = () => {
   const [posts, setPosts] = useState([]);
-  const savedIds = useMemo(() => JSON.parse(localStorage.getItem("proconnect_saved_posts") || "[]"), []);
 
   useEffect(() => {
     const load = async () => {
       try {
         const res = await api.get("/posts/feed");
         const list = Array.isArray(res.data) ? res.data : [];
-        setPosts(list.filter((post) => savedIds.includes(post.id)));
+        setPosts(list.filter((post) => post.savedByUser));
       } catch {
         setPosts([]);
       }
     };
 
     load();
-  }, [savedIds]);
+  }, []);
+
+  const handleSaveChange = (postId, saved) => {
+    if (!saved) {
+      setPosts((current) => current.filter((post) => post.id !== postId));
+    }
+  };
 
   return (
     <section className="space-y-4">
@@ -33,7 +38,7 @@ const SavedPostsPage = () => {
             Aún no tienes publicaciones guardadas.
           </p>
         ) : (
-          posts.map((post) => <PostCard key={post.id} post={post} />)
+          posts.map((post) => <PostCard key={post.id} post={post} onSaveChange={handleSaveChange} />)
         )}
       </div>
     </section>

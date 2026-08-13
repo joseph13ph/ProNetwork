@@ -1,13 +1,13 @@
 import { Notification, User } from "../models/index.js";
 import { getUserId } from "../utils/auth.js";
 import { getIo } from "../utils/socketServer.js";
-import { createConnectionRequest, listConnectionsForUser, respondConnectionRequest } from "../services/emulationService.js";
+import { createConnectionRequest, listConnectionsForUser, respondConnectionRequest } from "../services/connectionsService.js";
 
 const hydrateUserDirectory = async (requests, currentUserId) => {
   const ids = new Set();
   requests.forEach((item) => {
-    ids.add(item.fromUserId);
-    ids.add(item.toUserId);
+    ids.add(Number(item.fromUserId));
+    ids.add(Number(item.toUserId));
   });
 
   ids.delete(Number(currentUserId));
@@ -28,7 +28,7 @@ const hydrateUserDirectory = async (requests, currentUserId) => {
 export const listConnections = async (req, res) => {
   try {
     const currentUserId = getUserId(req.user);
-    const data = listConnectionsForUser(currentUserId);
+    const data = await listConnectionsForUser(currentUserId);
     const all = [...data.sent, ...data.received, ...data.accepted];
     const userDirectory = await hydrateUserDirectory(all, currentUserId);
 
@@ -46,7 +46,7 @@ export const requestConnection = async (req, res) => {
       return res.status(400).json({ message: "toUserId es requerido" });
     }
 
-    const result = createConnectionRequest({ fromUserId: currentUserId, toUserId });
+    const result = await createConnectionRequest({ fromUserId: currentUserId, toUserId });
     if (!result.ok) {
       if (result.reason === "SELF_REQUEST") return res.status(400).json({ message: "No puedes conectarte contigo mismo" });
       if (result.reason === "ALREADY_PENDING") return res.status(409).json({ message: "Ya existe una solicitud pendiente" });
@@ -63,7 +63,7 @@ export const requestConnection = async (req, res) => {
 export const acceptConnection = async (req, res) => {
   try {
     const currentUserId = getUserId(req.user);
-    const result = respondConnectionRequest({ requestId: req.params.requestId, userId: currentUserId, action: "accept" });
+    const result = await respondConnectionRequest({ requestId: req.params.requestId, userId: currentUserId, action: "accept" });
 
     if (!result.ok) {
       if (result.reason === "NOT_FOUND") return res.status(404).json({ message: "Solicitud no encontrada" });
@@ -94,7 +94,7 @@ export const acceptConnection = async (req, res) => {
 export const rejectConnection = async (req, res) => {
   try {
     const currentUserId = getUserId(req.user);
-    const result = respondConnectionRequest({ requestId: req.params.requestId, userId: currentUserId, action: "reject" });
+    const result = await respondConnectionRequest({ requestId: req.params.requestId, userId: currentUserId, action: "reject" });
 
     if (!result.ok) {
       if (result.reason === "NOT_FOUND") return res.status(404).json({ message: "Solicitud no encontrada" });

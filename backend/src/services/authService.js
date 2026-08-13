@@ -2,10 +2,8 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
 import { User } from "../models/index.js";
-import { isStrongPassword } from "../utils/password.js";
+import { hashPassword, isStrongPassword } from "../utils/password.js";
 import { isRealisticEmail, isValidLocation } from "../utils/validators.js";
-
-const SALT_ROUNDS = 12;
 
 export const registerUser = async (payload) => {
   const { nombre, apellido, email, password, telefono, ubicacion, rol } = payload;
@@ -47,7 +45,7 @@ export const registerUser = async (payload) => {
     }
   }
 
-  const password_hash = await bcrypt.hash(password, SALT_ROUNDS);
+  const password_hash = await hashPassword(password);
 
   const user = await User.create({
     nombre,

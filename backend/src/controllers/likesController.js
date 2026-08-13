@@ -1,10 +1,11 @@
-import { Like, Post, User, Notification } from "../models/index.js";
+import { Like, Post, Notification } from "../models/index.js";
 import { getIo } from "../utils/socketServer.js";
+import { getUserId } from "../utils/auth.js";
 
 export const toggleLike = async (req, res) => {
   try {
     const { postId } = req.params;
-    const userId = req.user.sub;
+    const userId = getUserId(req.user);
 
     const existing = await Like.findOne({ where: { postId, userId } });
     if (existing) {
@@ -18,7 +19,7 @@ export const toggleLike = async (req, res) => {
 
     // create a notification for the post owner
     const post = await Post.findByPk(postId);
-    if (post && post.userId && post.userId !== userId) {
+    if (post && post.userId && Number(post.userId) !== Number(userId)) {
       const notification = await Notification.create({
         userId: post.userId,
         actorId: userId,
@@ -44,8 +45,10 @@ export const toggleLike = async (req, res) => {
 export const getLikes = async (req, res) => {
   try {
     const { postId } = req.params;
+    const userId = getUserId(req.user);
     const count = await Like.count({ where: { postId } });
-    return res.json({ ok: true, likesCount: count });
+    const likedByUser = Boolean(await Like.findOne({ where: { postId, userId } }));
+    return res.json({ ok: true, likesCount: count, likedByUser });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Error getLikes", error);
